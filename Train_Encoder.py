@@ -4,6 +4,7 @@ import pickle
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torch.nn.functional as func
 
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
@@ -71,6 +72,9 @@ class EEG_Encoder():
 
         print(f"Start training for model id {run_id}")
         for epoch in range(num_epochs):
+
+            eeg_encoder.train()
+
             for batch_idx, (x, y) in enumerate(zip(x_train_loader, y_train_loader)):
 
                 inputs, labels = x.to(device), y.to(device)
@@ -89,8 +93,36 @@ class EEG_Encoder():
                         f"Loss : {loss:.4f}"
                     )
 
+            eeg_encoder.eval()
+
+            x_test_tensor = torch.Tensor(x_test)
+            y_test_tensor = torch.Tensor(y_test)
+
+            x_test_loader = DataLoader(x_test_tensor, batch_size=batch_size, shuffle=False)
+            y_test_loader = DataLoader(y_test_tensor, batch_size=batch_size, shuffle=False)
+
+            correct_label = 0
+            total_label = 0
+            for batch_idx, (x, y) in enumerate(zip(x_test_loader, y_test_loader)):
+                inputs, labels = x.to(device), y.to(device)
+
+                outputs = eeg_encoder(inputs)
+
+                probability = func.softmax(outputs, dim=1)
+
+                for i in range(len(probability)):
+                    pred = torch.argmax(probability[i])
+                    target = torch.argmax(labels[i])
+                    if (pred == target):
+                        correct_label += 1
+                    total_label += 1
+
+            print(
+                f"Accuracy : {correct_label/total_label} % "
+            )
+
 if __name__ == '__main__':
-    batch_size, num_epochs = 128, 100
+    batch_size, num_epochs = 128, 200
 
     char_encoder = EEG_Encoder(10, 'char')
-    char_encoder.train('', 1, batch_size, num_epochs, 0.0001)
+    char_encoder.train('', 1, batch_size, num_epochs, 0.001)
