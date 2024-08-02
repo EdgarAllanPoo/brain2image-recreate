@@ -80,7 +80,7 @@ class EEG_Encoder():
                 inputs, labels = x.to(device), y.to(device)
 
                 opt.zero_grad()
-                outputs = eeg_encoder(inputs)
+                outputs, _ = eeg_encoder(inputs)
 
                 loss = loss_function(outputs, labels)
 
@@ -106,7 +106,7 @@ class EEG_Encoder():
             for batch_idx, (x, y) in enumerate(zip(x_test_loader, y_test_loader)):
                 inputs, labels = x.to(device), y.to(device)
 
-                outputs = eeg_encoder(inputs)
+                outputs, _ = eeg_encoder(inputs)
 
                 probability = func.softmax(outputs, dim=1)
 
@@ -122,7 +122,7 @@ class EEG_Encoder():
             )
 
 if __name__ == '__main__':
-    batch_size, num_epochs = 128, 200
+    batch_size, num_epochs = 128, 5
 
     char_encoder = EEG_Encoder(10, 'char')
     char_encoder.train('', 1, batch_size, num_epochs, 0.001)
