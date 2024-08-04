@@ -49,16 +49,18 @@ def load_char_data(char_fonts_folders, resize_shape, num_classes):
     x_train = (x_train.astype(np.float32) - 127.5) / 127.5
     x_test = (x_test.astype(np.float32) - 127.5) / 127.5
 
-    x_train = x_train[:, :, :, None]
-    x_test = x_test[:, :, :, None]
+
+
+    x_train = x_train[:, None, :, :]
+    x_test = x_test[:, None, :, :]
     y_train = to_categorical(y_train, num_classes)
     y_test = to_categorical(y_test, num_classes)
     return x_train, y_train, x_test, y_test
 
-char_fonts_folders = ["./data/images/Char-Font"]
-x_train, y_train, x_test, y_test = load_char_data(char_fonts_folders, resize_shape=(28, 28), num_classes=10)
-print("Loaded Characters Dataset.")
-print(x_train.shape)
-print(y_train.shape)
-print(x_test.shape)
-print(y_test.shape)
+# char_fonts_folders = ["./data/images/Char-Font"]
+# x_train, y_train, x_test, y_test = load_char_data(char_fonts_folders, resize_shape=(28, 28), num_classes=10)
+# print("Loaded Characters Dataset.")
+# print(x_train.shape)
+# print(y_train.shape)
+# print(x_test.shape)
+# print(y_test.shape)

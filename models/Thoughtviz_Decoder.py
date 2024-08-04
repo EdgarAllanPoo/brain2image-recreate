@@ -25,7 +25,6 @@ class Generator(nn.Module):
         )
     
     def forward(self, noise, eeg_features):
-        # Mengubah ukuran menjadi (BATCH_SIZE, 1, NOISE_DIM)
         output = self.gaussian_layer(noise)
         output = torch.cat((noise, eeg_features), dim=1)
         output = self.gen_p1(output)
@@ -34,25 +33,46 @@ class Generator(nn.Module):
 
         return output
     
-# class Discriminator(nn.Module):
-#     def __init__(self, img_shape, output_dim):
-#         super(Discriminator, self).__init__()
+class Discriminator(nn.Module):
+    def __init__(self, img_dim):
+        super(Discriminator, self).__init__()
+        self.disc = nn.Sequential(
+            nn.Conv2d(img_dim, 64, kernel_size=(5, 5), padding=2),
+            nn.Tanh(),
+            nn.MaxPool2d((2, 2)),
+            nn.Conv2d(64, 128, kernel_size=(5,5)),
+            nn.Tanh(),
+            nn.MaxPool2d((2, 2)),
+            nn.Flatten(),
+            nn.Linear(3200, 1024),
+            nn.Tanh(),           
+        )
+        self.fake = nn.Sequential(
+            nn.Linear(1024, 1),
+            nn.Sigmoid(),
+        )
+    
+    def forward(self, img):
+        output = self.disc(img)
+        output = self.fake(output)
 
+        return output
 
-# Parameter untuk pengujian
+# test
 batch_size = 32
-noise_dim = (batch_size, 100)  # 100 adalah dimensi dari noise
-eeg_dim = (batch_size, 100)    # 100 adalah dimensi dari fitur EEG
+noise_dim = (batch_size, 100) 
+eeg_dim = (batch_size, 100)    
 
-# Buat input buatan
 noise = torch.randn(noise_dim)
 eeg_features = torch.randn(eeg_dim)
 
-# Inisialisasi model
 generator = Generator(noise_dim)
 
-# Forward pass
 output = generator.forward(noise, eeg_features)
+print("Generator output shape:", output.shape)
 
-# Output hasil
-print("Output shape:", output.shape)
+img_dim = 1
+discriminator = Discriminator(img_dim)
+
+output = discriminator(output)
+print("Discriminator output shape:", output.shape)
