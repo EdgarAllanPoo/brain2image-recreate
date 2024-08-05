@@ -122,7 +122,7 @@ class EEG_Encoder():
             )
 
 if __name__ == '__main__':
-    batch_size, num_epochs = 128, 5
+    batch_size, num_epochs = 128, 1
 
     char_encoder = EEG_Encoder(10, 'char')
     char_encoder.train('', 1, batch_size, num_epochs, 0.001)

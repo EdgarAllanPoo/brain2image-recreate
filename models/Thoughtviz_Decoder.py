@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from custom_layers.ThoughtViz_MoG import MoG
+from models.custom_layers.ThoughtViz_MoG import MoG
 
 class Generator(nn.Module):
     def __init__(self, noise_dim):
@@ -51,7 +51,7 @@ class Discriminator(nn.Module):
             nn.Linear(1024, 1),
             nn.Sigmoid(),
         )
-    
+
     def forward(self, img):
         output = self.disc(img)
         output = self.fake(output)
@@ -59,20 +59,22 @@ class Discriminator(nn.Module):
         return output
 
 # test
-batch_size = 32
-noise_dim = (batch_size, 100) 
-eeg_dim = (batch_size, 100)    
+# batch_size = 32
+# noise_dim = (batch_size, 100) 
+# eeg_dim = (batch_size, 100)    
 
-noise = torch.randn(noise_dim)
-eeg_features = torch.randn(eeg_dim)
+# noise = torch.randn(noise_dim)
+# eeg_features = torch.randn(eeg_dim)
 
-generator = Generator(noise_dim)
+# generator = Generator(noise_dim)
 
-output = generator.forward(noise, eeg_features)
-print("Generator output shape:", output.shape)
+# output = generator.forward(noise, eeg_features)
+# print("Generator output shape:", output.shape)
 
-img_dim = 1
-discriminator = Discriminator(img_dim)
+# img_dim = 1
+# discriminator = Discriminator(img_dim)
 
-output = discriminator(output)
-print("Discriminator output shape:", output.shape)
+# output = discriminator(output)
+# print("Discriminator output shape:", output.shape)
+# print(output)
+# print(output[:5])
